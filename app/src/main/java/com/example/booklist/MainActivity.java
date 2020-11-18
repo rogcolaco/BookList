@@ -6,9 +6,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.example.booklist.databinding.ActivityMainBinding;
 
@@ -28,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_BOOK = "EXTRA_BOOK";
 
     private final int NEW_BOOK_REQUEST_CODE = 0;
+    private final int EDIT_BOOK_REQUEST_CODE = 1;
+
+    //book a ser deletado
+    private Book oldBook;
 
 
     @Override
@@ -47,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
 
         //setando o bookList com o bookList Adapter
         activityMainBinding.bookListLv.setAdapter(bookListAdapter);
+
+        //Registrar booklistview com menu de contexto
+        registerForContextMenu(activityMainBinding.bookListLv);
     }
 
     // Método que popula o bookList para teste
@@ -82,6 +93,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.context_menu_main, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Book book = bookList.get(info.position);
+        switch (item.getItemId()){
+            case R.id.editBookMi:
+                Intent editBookIntent = new Intent(this, NewBookActivity.class);
+                editBookIntent.putExtra(EXTRA_BOOK,book);
+                oldBook = book;
+                startActivityForResult(editBookIntent, EDIT_BOOK_REQUEST_CODE);
+                return true;
+            case R.id.deleteBookMi:
+                bookListAdapter.remove(book);
+                Toast.makeText(this, "Livro removido com sucesso", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -89,6 +126,13 @@ public class MainActivity extends AppCompatActivity {
             Book newBook = data.getParcelableExtra(MainActivity.EXTRA_BOOK);
             bookList.add(newBook);
             bookListAdapter.notifyDataSetChanged();
+        }
+        else {
+            if (requestCode == EDIT_BOOK_REQUEST_CODE && resultCode == RESULT_OK && data != null){
+                Book editedBook = data.getParcelableExtra(MainActivity.EXTRA_BOOK);
+                bookListAdapter.remove(oldBook);
+                bookListAdapter.add(editedBook);
+            }
         }
     }
 }

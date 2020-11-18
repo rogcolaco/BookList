@@ -16,6 +16,23 @@ class NewBookActivity : AppCompatActivity() {
         //Inflar layout com view Binding
         activityNewBookBinding = ActivityNewBookBinding.inflate(layoutInflater)
         setContentView(activityNewBookBinding.root)
+
+        val book = intent.getParcelableExtra<Book>(MainActivity.EXTRA_BOOK)
+        if (book !=null ) {
+            //MODO EDICAO
+            supportActionBar?.subtitle = "Edit Book"
+            with(activityNewBookBinding){
+                titleEt.setText(book.title)
+                isbnEt.setText(book.isbn)
+                firstAuthorEt.setText(book.firstAuthor)
+                publishCompEt.setText(book.publishingCompany)
+                editionEt.setText(book.edition.toString())
+                pagesEt.setText(book.pages.toString())
+            }
+
+        } else {
+            supportActionBar?.subtitle = "New Book"
+        }
     }
 
     fun onClick (view: View){

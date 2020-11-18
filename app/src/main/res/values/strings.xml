@@ -8,4 +8,6 @@
     <string name="pages">Number of Pages</string>
     <string name="save">Save</string>
     <string name="new_book">New Book</string>
+    <string name="edit_book">Edit Book</string>
+    <string name="delete_book">Delete Book</string>
 </resources>
