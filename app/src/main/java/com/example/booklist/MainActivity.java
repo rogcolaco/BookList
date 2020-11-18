@@ -37,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
     //book a ser deletado
     private Book oldBook;
 
+    //action para visualização
+    public static final String ACTION_VIEW_BOOK = "ACTION_VIEW_BOOK";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +61,18 @@ public class MainActivity extends AppCompatActivity {
 
         //Registrar booklistview com menu de contexto
         registerForContextMenu(activityMainBinding.bookListLv);
+
+        activityMainBinding.bookListLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Book book = bookList.get(position);
+
+                Intent viewBookIntent = new Intent(MainActivity.this, NewBookActivity.class);
+                viewBookIntent.putExtra(EXTRA_BOOK,book);
+                viewBookIntent.setAction(ACTION_VIEW_BOOK);
+                startActivity(viewBookIntent);
+            }
+        });
     }
 
     // Método que popula o bookList para teste

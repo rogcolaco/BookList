@@ -20,7 +20,6 @@ class NewBookActivity : AppCompatActivity() {
         val book = intent.getParcelableExtra<Book>(MainActivity.EXTRA_BOOK)
         if (book !=null ) {
             //MODO EDICAO
-            supportActionBar?.subtitle = "Edit Book"
             with(activityNewBookBinding){
                 titleEt.setText(book.title)
                 isbnEt.setText(book.isbn)
@@ -28,6 +27,25 @@ class NewBookActivity : AppCompatActivity() {
                 publishCompEt.setText(book.publishingCompany)
                 editionEt.setText(book.edition.toString())
                 pagesEt.setText(book.pages.toString())
+            }
+
+            val action = intent.action
+            if (action != null && action == MainActivity.ACTION_VIEW_BOOK){
+                //visualização
+                supportActionBar?.subtitle = "Book Details"
+                with(activityNewBookBinding) {
+                    titleEt.isEnabled = false
+                    isbnEt.isEnabled = false
+                    firstAuthorEt.isEnabled = false
+                    publishCompEt.isEnabled = false
+                    editionEt.isEnabled = false
+                    pagesEt.isEnabled = false
+                    saveBt.visibility = View.GONE
+                }
+
+            } else {
+                //Edição
+                supportActionBar?.subtitle = "Edit Book"
             }
 
         } else {
