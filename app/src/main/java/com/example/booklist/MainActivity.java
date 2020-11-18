@@ -1,8 +1,13 @@
 package com.example.booklist;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
 import com.example.booklist.databinding.ActivityMainBinding;
@@ -15,10 +20,14 @@ public class MainActivity extends AppCompatActivity {
     private List<Book> bookList;
 
     //adpter do ListView
-    private ArrayAdapter<String> bookListAdapter;
+    private BookListAdapter bookListAdapter;
 
     //View Binding
     private ActivityMainBinding activityMainBinding;
+
+    public static final String EXTRA_BOOK = "EXTRA_BOOK";
+
+    private final int NEW_BOOK_REQUEST_CODE = 0;
 
 
     @Override
@@ -34,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         initializeBookList();
 
         //Instanciar bookList
-        bookListAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, bookList);
+        bookListAdapter = new BookListAdapter(this, R.layout.book_layout, bookList);
 
         //setando o bookList com o bookList Adapter
         activityMainBinding.bookListLv.setAdapter(bookListAdapter);
@@ -53,6 +62,33 @@ public class MainActivity extends AppCompatActivity {
                             i
                     )
             );
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.newBookMi){
+            Intent newBookIntent = new Intent(this, NewBookActivity.class);
+            startActivityForResult(newBookIntent, NEW_BOOK_REQUEST_CODE);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == NEW_BOOK_REQUEST_CODE && resultCode == RESULT_OK && data != null){
+            Book newBook = data.getParcelableExtra(MainActivity.EXTRA_BOOK);
+            bookList.add(newBook);
+            bookListAdapter.notifyDataSetChanged();
         }
     }
 }

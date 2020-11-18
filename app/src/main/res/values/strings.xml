@@ -6,4 +6,6 @@
     <string name="publishCompany">Publish Company</string>
     <string name="edition">Edition</string>
     <string name="pages">Number of Pages</string>
+    <string name="save">Save</string>
+    <string name="new_book">New Book</string>
 </resources>
